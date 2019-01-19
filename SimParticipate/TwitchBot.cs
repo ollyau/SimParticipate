@@ -97,6 +97,7 @@ namespace SimParticipate
                         client.SendMessage(e.ChatMessage.Channel, $"{e.ChatMessage.DisplayName} just requested a '{arg1}' failure");
                         OnRaiseCommandEvent(new CommandEventArgs(ChatCommands.Failure, arg1.ToString(), arg2.ToString()));
                         break;
+                    case "transmit":
                     case "simconnect_transmitclientevent":
                         client.SendMessage(e.ChatMessage.Channel, $"{e.ChatMessage.DisplayName} just requested to send the '{arg1}' client event");
                         try

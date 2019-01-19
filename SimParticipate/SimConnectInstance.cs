@@ -59,14 +59,17 @@ namespace SimParticipate
         {
             _sc = sc;
             _events = new Dictionary<string, uint>();
-            var data = JObject.Parse(File.ReadAllText("events.json"));
-            _simEvents = data["events"].ToObject<HashSet<string>>();
+            if (File.Exists("events.json"))
+            {
+                var data = JObject.Parse(File.ReadAllText("events.json"));
+                _simEvents = data["events"].ToObject<HashSet<string>>();
+            }
         }
 
         private Events GetEventID(string strEventID)
         {
             var evt = strEventID.Trim().ToUpperInvariant();
-            if (!_simEvents.Contains(evt))
+            if (_simEvents != null && !_simEvents.Contains(evt))
             {
                 throw new KeyNotFoundException($"Given event string '{strEventID}' does not exist in Flight Simulator X.");
             }
