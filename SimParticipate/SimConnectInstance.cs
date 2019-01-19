@@ -196,12 +196,12 @@ namespace SimParticipate
 
         public int TransmitClientEvent(string evt)
         {
-            return events.TransmitClientEventToUser(evt, SIMCONNECT_GROUP_PRIORITY.DEFAULT);
+            return events.TransmitClientEventToUser(evt, SIMCONNECT_GROUP_PRIORITY.HIGHEST);
         }
 
         public int TransmitClientEvent(string evt, uint data)
         {
-            return events.TransmitClientEventToUser(evt, data, SIMCONNECT_GROUP_PRIORITY.DEFAULT);
+            return events.TransmitClientEventToUser(evt, data, SIMCONNECT_GROUP_PRIORITY.HIGHEST);
         }
     }
 }
