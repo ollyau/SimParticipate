@@ -55,29 +55,84 @@ namespace SimParticipate
                 case ChatCommands.Echo:
                     break;
                 case ChatCommands.Failure:
+                    OnFailureCommand(e);
+                    break;
+                case ChatCommands.Text:
+                    sc.Text(10.0f, $"Message from {e.PrimaryArgument}: \"{e.SecondaryArgument}\"");
                     break;
                 case ChatCommands.TransmitClientEvent:
-                    if (string.IsNullOrWhiteSpace(e.SecondaryArgument))
-                    {
-                        log.Info($"Attempting to TransmitClientEvent `{e.PrimaryArgument}`");
-                        sc.TransmitClientEvent(e.PrimaryArgument);
-                    }
-                    else
-                    {
-                        var result = uint.TryParse(e.SecondaryArgument, out uint data);
-                        if (result)
-                        {
-                            log.Info($"Attempting to TransmitClientEvent `{e.PrimaryArgument}` with data {data}");
-                            sc.TransmitClientEvent(e.PrimaryArgument, data);
-                        }
-                        else
-                        {
-                            log.Info($"Unable to parse secondary argument `{e.SecondaryArgument}` as uint");
-                        }
-                    }
+                    OnClientEventCommand(e);
                     break;
                 default:
                     log.Warning($"TwitchBot raised unknown command {Enum.GetName(typeof(ChatCommands), e.Command)}");
+                    break;
+            }
+        }
+
+        private void OnClientEventCommand(CommandEventArgs e)
+        {
+            if (string.IsNullOrWhiteSpace(e.SecondaryArgument))
+            {
+                log.Info($"Attempting to TransmitClientEvent `{e.PrimaryArgument}`");
+                sc.TransmitClientEvent(e.PrimaryArgument);
+            }
+            else
+            {
+                var result = uint.TryParse(e.SecondaryArgument, out uint data);
+                if (result)
+                {
+                    log.Info($"Attempting to TransmitClientEvent `{e.PrimaryArgument}` with data {data}");
+                    sc.TransmitClientEvent(e.PrimaryArgument, data);
+                }
+                else
+                {
+                    log.Info($"Unable to parse secondary argument `{e.SecondaryArgument}` as uint");
+                }
+            }
+        }
+
+        private void OnFailureCommand(CommandEventArgs e)
+        {
+            switch (e.PrimaryArgument.ToUpperInvariant())
+            {
+                case "VACUUM":
+                    sc.TransmitClientEvent("TOGGLE_VACUUM_FAILURE");
+                    break;
+                case "ELECTRICAL":
+                    sc.TransmitClientEvent("TOGGLE_ELECTRICAL_FAILURE");
+                    break;
+                case "PITOT":
+                    sc.TransmitClientEvent("TOGGLE_PITOT_BLOCKAGE");
+                    break;
+                case "STATIC":
+                    sc.TransmitClientEvent("TOGGLE_STATIC_PORT_BLOCKAGE");
+                    break;
+                case "HYDRAULIC":
+                    sc.TransmitClientEvent("TOGGLE_HYDRAULIC_FAILURE");
+                    break;
+                case "BRAKE":
+                    if (!string.IsNullOrWhiteSpace(e.SecondaryArgument))
+                    {
+                        switch (e.SecondaryArgument.ToUpperInvariant())
+                        {
+                            case "LEFT":
+                                sc.TransmitClientEvent("TOGGLE_LEFT_BRAKE_FAILURE");
+                                break;
+                            case "RIGHT":
+                                sc.TransmitClientEvent("TOGGLE_RIGHT_BRAKE_FAILURE");
+                                break;
+                            default:
+                                log.Warning($"unknown brake failure argument {e.SecondaryArgument}");
+                                break;
+                        }
+                    }
+                    else
+                    {
+                        sc.TransmitClientEvent("TOGGLE_TOTAL_BRAKE_FAILURE");
+                    }                    
+                    break;
+                case "ENGINE":
+                    sc.TransmitClientEvent("TOGGLE_ENGINE1_FAILURE");
                     break;
             }
         }

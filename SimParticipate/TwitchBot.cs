@@ -16,6 +16,7 @@ namespace SimParticipate
     {
         Echo,
         Failure,
+        Text,
         TransmitClientEvent
     }
 
@@ -87,18 +88,23 @@ namespace SimParticipate
                 var arg1 = result.Groups[3];
                 var arg2 = result.Groups[5];
 
-                switch (cmd.ToString().ToLowerInvariant())
+                switch (cmd.ToString().ToUpperInvariant())
                 {
-                    case "echo":
+                    case "ECHO":
                         client.SendMessage(e.ChatMessage.Channel, $"{e.ChatMessage.DisplayName} just said '{e.ChatMessage.Message}'");
                         OnRaiseCommandEvent(new CommandEventArgs(ChatCommands.Echo, arg1.ToString(), arg2.ToString()));
                         break;
-                    case "fail":
+                    case "FAIL":
+                    case "FAILURE":
                         client.SendMessage(e.ChatMessage.Channel, $"{e.ChatMessage.DisplayName} just requested a '{arg1}' failure");
                         OnRaiseCommandEvent(new CommandEventArgs(ChatCommands.Failure, arg1.ToString(), arg2.ToString()));
                         break;
-                    case "transmit":
-                    case "simconnect_transmitclientevent":
+                    case "TEXT":
+                        client.SendMessage(e.ChatMessage.Channel, $"{e.ChatMessage.DisplayName}'s message was sent to the simulator");
+                        OnRaiseCommandEvent(new CommandEventArgs(ChatCommands.Text, e.ChatMessage.DisplayName, arg1.ToString()));
+                        break;
+                    case "TRANSMIT":
+                    case "SIMCONNECT_TRANSMITCLIENTEVENT":
                         client.SendMessage(e.ChatMessage.Channel, $"{e.ChatMessage.DisplayName} just requested to send the '{arg1}' client event");
                         try
                         {

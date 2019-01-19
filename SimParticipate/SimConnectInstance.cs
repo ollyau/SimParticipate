@@ -194,6 +194,11 @@ namespace SimParticipate
             Disconnect();
         }
 
+        public int Text(float fTimeSeconds, string strText)
+        {
+            return sc.Text(SIMCONNECT_TEXT_TYPE.PRINT_WHITE, fTimeSeconds, Requests.DisplayText, $"{appName}: {strText}");
+        }
+
         public int TransmitClientEvent(string evt)
         {
             return events.TransmitClientEventToUser(evt, SIMCONNECT_GROUP_PRIORITY.HIGHEST);
